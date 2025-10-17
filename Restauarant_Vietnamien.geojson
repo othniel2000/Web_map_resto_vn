@@ -1,0 +1,18 @@
+{
+"type": "FeatureCollection",
+"name": "Restauarant_Vietnamien",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "Name": "Ô BONZAÏ", "Commune": "Cocody", "Quartier": "Camp milaire Akouedo" }, "geometry": { "type": "Point", "coordinates": [ -3.9339656, 5.3741183, 0.0 ] } },
+{ "type": "Feature", "properties": { "Name": "Restaurants MÉKONG", "Commune": "Marcory", "Quartier": "Residentiel" }, "geometry": { "type": "Point", "coordinates": [ -3.9918053, 5.3103713, 0.0 ] } },
+{ "type": "Feature", "properties": { "Name": "Restaurant Phở Hằng", "Commune": "Marcory", "Quartier": "Bietri" }, "geometry": { "type": "Point", "coordinates": [ -3.978967, 5.2770415, 0.0 ] } },
+{ "type": "Feature", "properties": { "Name": "Restaurant STAR Vietnamien", "Commune": "Cocody", "Quartier": "Deux plateau,boulvard latrille" }, "geometry": { "type": "Point", "coordinates": [ -3.9975903, 5.3667942, 0.0 ] } },
+{ "type": "Feature", "properties": { "Name": "Super Maquis Vietnamien", "Commune": "Cocody", "Quartier": "Deux plateau,carrefou Duncan" }, "geometry": { "type": "Point", "coordinates": [ -3.9982069, 5.3737055, 0.0 ] } },
+{ "type": "Feature", "properties": { "Name": "Hao Nem Vietnamienne", "Commune": "Marcory", "Quartier": "Bietri,Avenue Vanie bi tra" }, "geometry": { "type": "Point", "coordinates": [ -3.9809882, 5.282751, 0.0 ] } },
+{ "type": "Feature", "properties": { "Name": "Maquis vietnamien chez Nam-Phuong", "Commune": "Port Bouet", "Quartier": "Rue du marche" }, "geometry": { "type": "Point", "coordinates": [ -3.9617116, 5.2561245, 0.0 ] } },
+{ "type": "Feature", "properties": { "Name": "25 rue du canal, abidjan", "Commune": "Marcory", "Quartier": "Bietri,Avenue Vanie bi tra" }, "geometry": { "type": "Point", "coordinates": [ -3.9698437, 5.2763042, 0.0 ] } },
+{ "type": "Feature", "properties": { "Name": "La Baie d'Along", "Commune": "Cocody", "Quartier": "Rue des jardins" }, "geometry": { "type": "Point", "coordinates": [ -3.9898378, 5.366758, 0.0 ] } },
+{ "type": "Feature", "properties": { "Name": "NEM CHEZ WILLIAM", "Commune": "Cocody", "Quartier": "Lycee Mermoz" }, "geometry": { "type": "Point", "coordinates": [ -3.9988091, 5.3391788, 0.0 ] } },
+{ "type": "Feature", "properties": { "Name": "Chez Léon, maquis vietnamien", "Commune": "Marcory", "Quartier": "Zone 4a" }, "geometry": { "type": "Point", "coordinates": [ -3.990211, 5.2955569, 0.0 ] } }
+]
+}
