@@ -18,3 +18,16 @@ h2 {
   width: 100%;
   border-top: 3px solid #241d1d;
 }
+/* Responsive pour la carte */
+@media (max-width: 768px) {
+  #map {
+    height: 70vh; /* moins haut sur tablettes et petits écrans */
+  }
+}
+
+@media (max-width: 480px) {
+  #map {
+    height: 60vh; /* encore moins haut sur smartphones portrait */
+  }
+}
+

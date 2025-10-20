@@ -158,7 +158,8 @@ div.style.backdropFilter = 'blur(6px)';
 div.style.border = '1px solid rgba(255,255,255,0.4)';
 div.style.borderRadius = '16px';
 div.style.padding = '15px 20px';
-div.style.width = '300px';
+div.style.width = '90%';
+div.style.maxWidth = '300px';
 div.style.maxHeight = '320px';
 div.style.boxShadow = '0 4px 14px rgba(0,0,0,0.25)';
 div.style.fontFamily = 'Segoe UI, Arial';
@@ -236,6 +237,11 @@ div.onclick = function (e) {
       },
     }).addTo(map);
   });
+
+  // S'assurer que la carte s'adapte quand on redimensionne la fenêtre
+window.addEventListener('resize', function() {
+  map.invalidateSize();
+});
 
 // Rendre la fonction accessible au bouton du popup
 window.showRouteToRestaurant = showRouteToRestaurant;
