@@ -1,5 +1,8 @@
 const map = L.map("map").setView([5.34, -4.03], 12); // creation de map
 
+let restaurants = null; // ✅ variable globale vide pour l'utiliser partout
+
+
 // --- Itinéraire OSRM (gratuit) ---
 let routeLayer = null;
 function showRouteToRestaurant(destLat, destLng) {
@@ -61,7 +64,11 @@ searchControl.onAdd = function () {
     input.addEventListener('keydown', function(e) {
       if (e.key === 'Enter') {
         const val = this.value.trim().toLowerCase();
-        const found = restaurants.features.find(f => f.properties.nom.toLowerCase() === val);
+        const found = restaurants.features.find(f => 
+  f.properties.Name && f.properties.Name.toLowerCase().includes(val)
+);
+
+
         if (found) {
           const coords = found.geometry.coordinates;
           map.setView([coords[1], coords[0]], 16);
@@ -140,112 +147,94 @@ if (navigator.geolocation) {
 // Chargement du GeoJSON externe et intégration à la carte
 fetch('Restauarant_Vietnamien.geojson')
   .then(response => response.json())
-  .then(restaurants => {
+  .then(data => {
+    restaurants = data;
     // Création d'un contrôle de liste des restaurants (légende en bas à droite)
     const listControl = L.control({ position: 'bottomright' });
     listControl.onAdd = function () {
       const div = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
-  
-  // --- 💄 Style amélioré de la boîte ---
-  div.style.background = 'rgba(255, 255, 255, 0.95)';
-  div.style.padding = '18px 22px';
-  div.style.maxWidth = '340px';        // 🔹 plus large
-  div.style.maxHeight = '320px';       // 🔹 plus haute
-  div.style.overflowY = 'auto';
-  div.style.borderRadius = '15px';
-  div.style.boxShadow = '0 4px 10px rgba(0,0,0,0.3)';
-  div.style.fontFamily = 'Poppins, Segoe UI, Arial, sans-serif';
-  div.style.fontSize = '15px';
-  div.style.color = '#333';
-  div.style.lineHeight = '1.4em';
+div.style.background = 'rgba(255, 255, 255, 0.7)';
+div.style.backdropFilter = 'blur(6px)';
+div.style.border = '1px solid rgba(255,255,255,0.4)';
+div.style.borderRadius = '16px';
+div.style.padding = '15px 20px';
+div.style.width = '300px';
+div.style.maxHeight = '320px';
+div.style.boxShadow = '0 4px 14px rgba(0,0,0,0.25)';
+div.style.fontFamily = 'Segoe UI, Arial';
+div.style.fontSize = '15px';
+div.style.color = '#1a1a1a';
+div.style.overflowY = 'auto';
+div.style.transition = 'all 0.3s ease';
+div.style.transform = 'scale(1.05)';
+div.style.marginRight = '20px';
+div.style.marginTop = '10px';
 
-  div.innerHTML = `
-    <h3 style="margin-top:0;margin-bottom:10px;text-align:center;color:#d32f2f;">
-      🍜 Restaurants vietnamiens
-    </h3>
-    <ul style="margin:0;padding-left:18px;list-style:none;">
-      ${restaurants.features.map(f => `
-        <li style="cursor:pointer;padding:6px 0;border-bottom:1px solid #eee;">
-          🍽️ ${f.properties.Name}
-        </li>`).join('')}
-    </ul>
-  `;
+   div.innerHTML = `
+  <h3 style="margin-top:0;color:#d32f2f;text-align:center;">🍴 Restaurants Vietnamiens</h3>
+  <ul style="margin:0;padding-left:25px;list-style:none;line-height:1.6;">
+    ${restaurants.features.map(f => `
+      <li 
+       style="
+            cursor:pointer;
+            background:url('https://cdn-icons-png.flaticon.com/512/859/859270.png') no-repeat left center;
+            background-size:18px;
+            padding-left:28px;
+            transition:all 0.3s ease;
+            border-radius:5px;
+            margin:3px 0;
+          " 
+          onmouseover="this.style.backgroundColor='rgba(255, 224, 224, 0.6)'; this.style.transform='translateX(4px)';" 
+          onmouseout="this.style.backgroundColor='transparent'; this.style.transform='translateX(0)';"
+          data-coords="${f.geometry.coordinates[1]},${f.geometry.coordinates[0]}"
+      >
+        ${f.properties.Name}
+      </li>`).join('')}
+  </ul>
+`;
 
-       // --- Interaction : zoom sur le restaurant cliqué ---
-  div.onclick = function (e) {
-    if (e.target.tagName === 'LI') {
-      const name = e.target.textContent.replace('🍽️', '').trim().toLowerCase();
-      const found = restaurants.features.find(f => f.properties.Name.toLowerCase() === name);
-      if (found) {
-        const coords = found.geometry.coordinates;
-        map.setView([coords[1], coords[0]], 16);
-      }
-    }
-  };
 
-  return div;
+
+      /* 
+// --- Interaction au clic sur les noms (désactivée) ---
+div.onclick = function (e) {
+  if (e.target.tagName === 'LI') {
+    const coords = e.target.getAttribute('data-coords').split(',');
+    map.setView([parseFloat(coords[0]), parseFloat(coords[1])], 16);
+  }
 };
-listControl.addTo(map);
+*/
+
+      return div;
+    };
+    listControl.addTo(map);
 
     // Définir une icône personnalisée pour les restaurants
     const restaurantIcon = L.icon({
-      iconUrl: 'https://cdn-icons-png.flaticon.com/512/3448/3448610.png',
-      iconSize: [32, 32],
-      iconAnchor: [16, 32],
-      popupAnchor: [0, -32]
-    });
+  iconUrl: 'https://cdn-icons-png.flaticon.com/512/3448/3448610.png', // icône plus réaliste
+  iconSize: [42, 42],
+  iconAnchor: [21, 42],
+  popupAnchor: [0, -38]
+});
 
-    // --- Ajout des points GeoJSON avec effet responsive (zoom au survol) ---
-L.geoJSON(restaurants, {
-  pointToLayer: (feature, latlng) => {
-    const normalIcon = L.icon({
-      iconUrl: 'https://cdn-icons-png.flaticon.com/512/3448/3448610.png',
-      iconSize: [32, 32],
-      iconAnchor: [16, 32],
-      popupAnchor: [0, -32]
-    });
 
-    const hoverIcon = L.icon({
-      iconUrl: 'https://cdn-icons-png.flaticon.com/512/3448/3448610.png',
-      iconSize: [42, 42],
-      iconAnchor: [21, 42],
-      popupAnchor: [0, -42]
-    });
-
-    const marker = L.marker(latlng, { icon: normalIcon, title: feature.properties.Name });
-
-    // 🔹 Effet de zoom au survol
-    marker.on('mouseover', () => {
-      marker.setIcon(hoverIcon);
-      marker.openPopup();
-    });
-
-    marker.on('mouseout', () => {
-      marker.setIcon(normalIcon);
-    });
-
-    // 🔹 Zoom de la carte quand on clique
-    marker.on('click', () => {
-      const coords = feature.geometry.coordinates;
-      map.setView([coords[1], coords[0]], 16);
-    });
-
-    const coords = feature.geometry.coordinates;
-    marker.bindPopup(`
-      <div style="text-align:center;">
-        <img src="https://cdn-icons-png.flaticon.com/512/3448/3448610.png" width="32" height="32" /><br/>
-        <b>${feature.properties.Name}</b><br/>
-        <small>${feature.properties.Commune}, ${feature.properties.Quartier}</small><br/>
-        <button onclick="window.showRouteToRestaurant(${coords[1]}, ${coords[0]})">
-          Itinéraire depuis ma position
-        </button>
-      </div>
-    `);
-
-    return marker;
-  }
-}).addTo(map);
-
+    // Ajout des points GeoJSON avec icône personnalisée, image dans le popup et bouton itinéraire
+    L.geoJSON(restaurants, {
+      onEachFeature: (feature, layer) => {
+        const coords = feature.geometry.coordinates;
+        layer.bindPopup(`
+          <div style="text-align:center;">
+            <img src="https://cdn-icons-png.flaticon.com/512/3448/3448610.png" alt="Aperçu icône restaurant" width="32" height="32" /><br/>
+            <b>${feature.properties.Name}</b><br/>
+            <small>${feature.properties.Commune}, ${feature.properties.Quartier}</small><br/>
+            <button onclick=\"window.showRouteToRestaurant(${coords[1]},${coords[0]})\">Itinéraire depuis ma position</button>
+          </div>
+        `);
+      },
+      pointToLayer: (feature, latlng) => {
+        return L.marker(latlng, { icon: restaurantIcon, title: feature.properties.Name });
+      },
+    }).addTo(map);
   });
 
 // Rendre la fonction accessible au bouton du popup
