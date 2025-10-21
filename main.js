@@ -153,14 +153,14 @@ fetch('Restauarant_Vietnamien.geojson')
     const listControl = L.control({ position: 'bottomright' });
     listControl.onAdd = function () {
       const div = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
-div.style.background = 'rgba(255, 255, 255, 0.7)';
+div.style.background = 'rgba(255, 255, 255, 0.5)';
 div.style.backdropFilter = 'blur(6px)';
 div.style.border = '1px solid rgba(255,255,255,0.4)';
 div.style.borderRadius = '16px';
 div.style.padding = '15px 20px';
 div.style.width = '90%';
-div.style.maxWidth = '270px';
-div.style.maxHeight = '280px';
+div.style.maxWidth = '250px';
+div.style.maxHeight = '270px';
 div.style.boxShadow = '0 4px 14px rgba(0,0,0,0.25)';
 div.style.fontFamily = 'Segoe UI, Arial';
 div.style.fontSize = '15px';

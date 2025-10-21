@@ -82,3 +82,41 @@ h2 {
     height: 92vh;
   }
 }
+/* ✅ Responsive pour la légende sur mobile */
+@media (max-width: 768px) {
+  .leaflet-control-custom {
+    width: 85% !important;
+    left: 7.5% !important;
+    right: 7.5% !important;
+    max-width: none !important;
+    font-size: 14px !important;
+    padding: 10px !important;
+    max-height: 220px !important;
+    overflow-y: auto !important;
+    backdrop-filter: blur(6px);
+  }
+
+  .leaflet-control-custom h3 {
+    font-size: 16px !important;
+    text-align: center;
+  }
+
+  .leaflet-control-custom ul {
+    max-height: 160px !important;
+    overflow-y: auto;
+  }
+}
+
+/* ✅ Encore plus petit pour smartphone étroit (≤ 480px) */
+@media (max-width: 480px) {
+  .leaflet-control-custom {
+    width: 95% !important;
+    left: 2.5% !important;
+    right: 2.5% !important;
+    font-size: 13px !important;
+    padding: 8px !important;
+    max-height: 180px !important;
+    overflow-y: scroll !important;
+    border-radius: 12px !important;
+  }
+}
