@@ -141,7 +141,7 @@ h2 {
 
   /* Conteneur de la liste (légende) */
   .leaflet-control-custom {
-    width: 85% !important;
+    width: 80% !important;
     left: 7.5% !important;
     right: 7.5% !important;
     font-size: 14px !important;
