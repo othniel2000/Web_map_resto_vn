@@ -3,7 +3,7 @@ const map = L.map("map").setView([5.34, -4.03], 12); // creation de map
 let restaurants = null; // ✅ variable globale vide pour l'utiliser partout
 
 
-// --- Itinéraire OSRM (gratuit) ---
+// --- Itinéraire OSRM 
 let routeLayer = null;
 function showRouteToRestaurant(destLat, destLng) {
   // Choix du mode de transport

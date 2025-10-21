@@ -1,8 +1,12 @@
+/* === Style global === */
 body {
   margin: 0;
   font-family: "Segoe UI", Arial, sans-serif;
   text-align: center;
   background: #fafafa;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* permet à la carte de prendre toute la hauteur */
 }
 
 h2 {
@@ -11,23 +15,70 @@ h2 {
   padding: 12px;
   margin: 0;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  font-size: clamp(16px, 2vw, 24px); /* taille adaptable */
 }
 
+/* === Carte principale === */
 #map {
-  height: 90vh;
+  flex: 1; /* prend tout l’espace restant */
   width: 100%;
+  height: 90vh;
   border-top: 3px solid #241d1d;
+  box-sizing: border-box;
 }
-/* Responsive pour la carte */
+
+/* === Responsive : tablettes === */
 @media (max-width: 768px) {
   #map {
-    height: 70vh; /* moins haut sur tablettes et petits écrans */
+    height: 70vh;
+  }
+
+  h2 {
+    font-size: 18px;
+    padding: 10px;
+  }
+
+  .leaflet-control-custom {
+    font-size: 13px !important;
   }
 }
 
+/* === Responsive : smartphones === */
 @media (max-width: 480px) {
   #map {
-    height: 60vh; /* encore moins haut sur smartphones portrait */
+    height: 65vh;
+  }
+
+  h2 {
+    font-size: 16px;
+    padding: 8px;
+  }
+
+  /* Adaptation des boîtes Leaflet (légende, recherche, etc.) */
+  .leaflet-control-custom {
+    width: 90% !important;
+    left: 5% !important;
+    right: 5% !important;
+    max-width: none !important;
+    font-size: 12px !important;
+    line-height: 1.4;
+    padding: 8px !important;
+  }
+
+  .leaflet-control-custom input[type="text"] {
+    width: 100% !important;
+    font-size: 13px;
+  }
+
+  .leaflet-popup-content {
+    font-size: 13px;
+    text-align: center;
   }
 }
 
+/* === Pour très grands écrans === */
+@media (min-width: 1400px) {
+  #map {
+    height: 92vh;
+  }
+}
