@@ -150,49 +150,39 @@ fetch('Restauarant_Vietnamien.geojson')
   .then(data => {
     restaurants = data;
     // Création d'un contrôle de liste des restaurants (légende en bas à droite)
-    const listControl = L.control({ position: 'bottomright' });
-    listControl.onAdd = function () {
-      const div = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
-div.style.background = 'rgba(255, 255, 255, 0.5)';
-div.style.backdropFilter = 'blur(6px)';
-div.style.border = '1px solid rgba(255,255,255,0.4)';
-div.style.borderRadius = '16px';
-div.style.padding = '15px 20px';
-div.style.width = '90%';
-div.style.maxWidth = '245px';
-div.style.maxHeight = '270px';
-div.style.boxShadow = '0 4px 14px rgba(0,0,0,0.25)';
-div.style.fontFamily = 'Segoe UI, Arial';
-div.style.fontSize = '15px';
-div.style.color = '#1a1a1a';
-div.style.overflowY = 'auto';
-div.style.transition = 'all 0.3s ease';
-div.style.transform = 'scale(1.05)';
-div.style.marginRight = '20px';
-div.style.marginTop = '10px';
+   const listControl = L.control({ position: 'bottomright' });
+listControl.onAdd = function () {
+  const div = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
+  div.style.background = 'rgba(255, 255, 255, 0.95)';
+  div.style.backdropFilter = 'blur(6px)';
+  div.style.border = '1px solid rgba(0,0,0,0.1)';
+  div.style.borderRadius = '12px';
+  div.style.padding = '10px 15px';
+  div.style.width = '240px';
+  div.style.maxHeight = '35vh';
+  div.style.overflowY = 'auto';
+  div.style.boxShadow = '0 4px 12px rgba(0,0,0,0.25)';
+  div.style.fontFamily = 'Segoe UI, Arial';
+  div.style.fontSize = '14px';
+  div.style.color = '#1a1a1a';
+  div.style.marginBottom = '10px';
+  div.style.marginRight = '10px';
 
-   div.innerHTML = `
-  <h3 style="margin-top:0;color:#d32f2f;text-align:center;">🍴 Restaurants Vietnamiens</h3>
-  <ul style="margin:0;padding-left:25px;list-style:none;line-height:1.6;">
-    ${restaurants.features.map(f => `
-      <li 
-       style="
-            cursor:pointer;
-            background:url('https://cdn-icons-png.flaticon.com/512/859/859270.png') no-repeat left center;
-            background-size:18px;
-            padding-left:28px;
-            transition:all 0.3s ease;
-            border-radius:5px;
-            margin:3px 0;
-          " 
-          onmouseover="this.style.backgroundColor='rgba(255, 224, 224, 0.6)'; this.style.transform='translateX(4px)';" 
-          onmouseout="this.style.backgroundColor='transparent'; this.style.transform='translateX(0)';"
+  div.innerHTML = `
+    <h3 style="margin-top:0;color:#d32f2f;text-align:center;">🍴 Restaurants Vietnamiens</h3>
+    <ul style="margin:0;padding-left:20px;list-style:none;line-height:1.6;">
+      ${restaurants.features.map(f => `
+        <li 
+          style="cursor:pointer;background:url('https://cdn-icons-png.flaticon.com/512/859/859270.png') no-repeat left center;
+          background-size:18px;padding-left:28px;margin:4px 0;border-radius:5px;transition:0.3s;"
+          onmouseover="this.style.backgroundColor='rgba(255, 224, 224, 0.6)'"
+          onmouseout="this.style.backgroundColor='transparent'"
           data-coords="${f.geometry.coordinates[1]},${f.geometry.coordinates[0]}"
-      >
-        ${f.properties.Name}
-      </li>`).join('')}
-  </ul>
-`;
+        >
+          ${f.properties.Name}
+        </li>`).join('')}
+    </ul>
+  `;
 
 
 
