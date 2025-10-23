@@ -83,19 +83,23 @@ h2 {
 @media (min-width: 1400px) {
   #map { height: 92vh; }
 }
-/* === Ajustement spécial mobile (meilleur rendu) === */
+/* === Légende optimisée pour mobile === */
 @media (max-width: 480px) {
   .leaflet-control-custom {
-    width: 60% !important;        /* plus étroite */
-    right: 10px !important;       /* espace depuis le bord droit */
-    left: auto !important;        /* on enlève le centrage */
-    bottom: 10px !important;      /* un peu au-dessus du bas */
-    border-radius: 12px !important;
-    max-height: 35vh !important;  /* ne cache pas la carte */
+    width: 50% !important;        /* moitié de l’écran, plus élégante */
+    right: 8px !important;        /* espace léger depuis le bord droit */
+    left: auto !important;        /* désactive centrage */
+    bottom: 8px !important;       /* un peu au-dessus du bas */
+    border-radius: 14px !important;
+    max-height: 32vh !important;  /* réduit la hauteur */
+    overflow-y: auto !important;  /* permet de scroller la liste */
     font-size: 13px !important;
+    background: rgba(255, 255, 255, 0.95) !important;
   }
 
   .leaflet-control-custom h3 {
     font-size: 14px !important;
+    margin-bottom: 6px !important;
   }
 }
+
