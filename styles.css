@@ -83,3 +83,19 @@ h2 {
 @media (min-width: 1400px) {
   #map { height: 92vh; }
 }
+/* === Ajustement spécial mobile (meilleur rendu) === */
+@media (max-width: 480px) {
+  .leaflet-control-custom {
+    width: 60% !important;        /* plus étroite */
+    right: 10px !important;       /* espace depuis le bord droit */
+    left: auto !important;        /* on enlève le centrage */
+    bottom: 10px !important;      /* un peu au-dessus du bas */
+    border-radius: 12px !important;
+    max-height: 35vh !important;  /* ne cache pas la carte */
+    font-size: 13px !important;
+  }
+
+  .leaflet-control-custom h3 {
+    font-size: 14px !important;
+  }
+}
