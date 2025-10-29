@@ -83,21 +83,41 @@ h2 {
 @media (min-width: 1400px) {
   #map { height: 92vh; }
 }
-/* === Légende optimisée pour mobile === */
+/* === Smartphones === */
 @media (max-width: 480px) {
-  .leaflet-control-custom {
-    width: 50% !important;        /* moitié de l’écran, plus élégante */
-    right: 8px !important;        /* espace léger depuis le bord droit */
-    left: auto !important;        /* désactive centrage */
-    bottom: 8px !important;       /* un peu au-dessus du bas */
-    border-radius: 14px !important;
-    max-height: 32vh !important;  /* réduit la hauteur */
-    overflow-y: auto !important;  /* permet de scroller la liste */
-    font-size: 13px !important;
-    background: rgba(255, 255, 255, 0.95) !important;
+  #map { 
+    height: 65vh !important; 
   }
 
-  
+  h2 { 
+    font-size: 16px; 
+    padding: 8px; 
+  }
+
+  .leaflet-control-custom {
+    width: 50% !important;           /* prend la moitié de l’écran à droite */
+    right: 8px !important;           /* bien collée au bord droit */
+    left: auto !important;
+    bottom: 8px !important;          /* en bas de la carte */
+    font-size: 13px !important;
+    background: rgba(255, 255, 255, 0.95) !important;
+    border-radius: 14px !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+    
+    /* ✅ Ces 2 lignes résolvent ton problème de défilement */
+    max-height: 35vh !important;     
+    overflow-y: auto !important;
+  }
+
+  .leaflet-control-custom input[type="text"] {
+    width: 100% !important;
+  }
+
+  .leaflet-popup-content {
+    font-size: 13px;
+    text-align: center;
+  }
+
   .leaflet-control-custom h3 {
     font-size: 14px !important;
     margin-bottom: 6px !important;
