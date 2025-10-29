@@ -145,7 +145,7 @@ if (navigator.geolocation) {
 }
 
 // Chargement du GeoJSON externe et intégration à la carte
-fetch('Restauarant_Vietnamien.geojson')
+fetch('Restauarant_Vietnamien.geojson.1.geojson')
   .then(response => response.json())
   .then(data => {
     restaurants = data;
