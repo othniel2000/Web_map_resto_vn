@@ -208,6 +208,16 @@ div.onclick = function (e) {
   popupAnchor: [0, -38]
 });
 
+  // ✅ Empêche la carte de bouger quand on scrolle dans la légende sur mobile
+    const legend = document.querySelector('.leaflet-control-custom');
+    if (legend) {
+      legend.addEventListener('touchstart', function (e) {
+        e.stopPropagation();  // bloque le drag Leaflet
+      });
+      legend.addEventListener('touchmove', function (e) {
+        e.stopPropagation();  // empêche le défilement de la carte
+      });
+    }
 
     // Ajout des points GeoJSON avec icône personnalisée, image dans le popup et bouton itinéraire
     L.geoJSON(restaurants, {
