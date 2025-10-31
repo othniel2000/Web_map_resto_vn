@@ -8,17 +8,37 @@
 </head>
 <body class="accueil">
   <div class="overlay">
-    <h1 class="titre">Plateforme des Restaurants de la ville d’Abidjan 🇨🇮🍜</h1>
+    <h1 class="titre" id="typedText"></h1>
+    <p class="slogan" id="slogan">Découvrez les meilleurs restaurants d’Abidjan sur une carte interactive 🍽️</p>
     <button id="goMap">Aller sur la carte</button>
   </div>
 
   <script>
+    // Effet "typing" pour le titre
+    const text = "Plateforme des Restaurants de la ville d’Abidjan 🇨🇮🍜";
+    let i = 0;
+    const speed = 80;
+    const typedText = document.getElementById("typedText");
+
+    function typeWriter() {
+      if (i < text.length) {
+        typedText.textContent += text.charAt(i);
+        i++;
+        setTimeout(typeWriter, speed);
+      } else {
+        // Affiche le slogan après le typing
+        document.getElementById("slogan").classList.add("show");
+      }
+    }
+    window.onload = typeWriter;
+
+    // Animation avant redirection
     document.getElementById("goMap").addEventListener("click", () => {
       const overlay = document.querySelector(".overlay");
-      overlay.classList.add("fade-out"); // Lance l'animation de sortie
+      overlay.classList.add("fade-out");
       setTimeout(() => {
-        window.location.href = "map.html"; // Redirige après 1,2s
-      }, 1200);
+        window.location.href = "map.html";
+      }, 1300);
     });
   </script>
 </body>

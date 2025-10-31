@@ -133,9 +133,10 @@ body.accueil {
   align-items: center;
   font-family: "Segoe UI", Arial, sans-serif;
   overflow: hidden;
+  animation: slowZoom 15s ease-in-out infinite alternate;
 }
 
-/* Effet d’assombrissement */
+/* Fond assombri */
 body.accueil::before {
   content: "";
   position: absolute;
@@ -154,18 +155,35 @@ body.accueil::before {
   border-radius: 16px;
   box-shadow: 0 4px 25px rgba(0,0,0,0.4);
   max-width: 90%;
-  animation: fadeInUp 1.2s ease-out, zoomIn 6s ease-in-out infinite alternate;
+  animation: fadeInUp 1.2s ease-out;
 }
 
-/* Titre animé */
-.overlay h1 {
+/* Titre (typing effect) */
+.titre {
   font-size: clamp(20px, 5vw, 38px);
-  margin-bottom: 25px;
-  animation: textGlow 2s ease-in-out infinite alternate;
+  margin-bottom: 15px;
+  min-height: 50px;
+  border-right: 2px solid #6cd0f1;
+  white-space: nowrap;
+  overflow: hidden;
+  animation: cursorBlink 0.8s infinite;
 }
 
-/* Bouton stylé */
-.overlay button {
+/* Slogan (apparaît après typing) */
+.slogan {
+  opacity: 0;
+  font-style: italic;
+  font-size: 18px;
+  color: #f0f0f0;
+  margin-bottom: 30px;
+  transition: opacity 1.5s ease;
+}
+.slogan.show {
+  opacity: 1;
+}
+
+/* Bouton stylé + pulsation */
+#goMap {
   background-color: #6cd0f1;
   color: white;
   border: none;
@@ -174,30 +192,36 @@ body.accueil::before {
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.3s ease;
+  animation: pulse 2s infinite ease-in-out;
 }
 
-.overlay button:hover {
+#goMap:hover {
   background-color: #4bb2d1;
   transform: scale(1.05);
 }
 
-/* --- Animations --- */
+/* === Animations === */
 @keyframes fadeInUp {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes zoomIn {
-  from { transform: scale(1); }
-  to { transform: scale(1.04); }
+@keyframes cursorBlink {
+  50% { border-color: transparent; }
 }
 
-@keyframes textGlow {
-  from { text-shadow: 0 0 5px #6cd0f1, 0 0 10px #4bb2d1; }
-  to { text-shadow: 0 0 15px #fff, 0 0 30px #6cd0f1; }
+@keyframes pulse {
+  0% { transform: scale(1); box-shadow: 0 0 10px rgba(108, 208, 241, 0.5); }
+  50% { transform: scale(1.05); box-shadow: 0 0 20px rgba(108, 208, 241, 0.8); }
+  100% { transform: scale(1); box-shadow: 0 0 10px rgba(108, 208, 241, 0.5); }
 }
 
-/* Animation de sortie avant la redirection */
+@keyframes slowZoom {
+  from { background-size: 100%; }
+  to { background-size: 108%; }
+}
+
+/* Transition avant redirection */
 .fade-out {
   animation: fadeOut 1.2s ease forwards;
 }
@@ -205,4 +229,12 @@ body.accueil::before {
 @keyframes fadeOut {
   from { opacity: 1; transform: scale(1); }
   to { opacity: 0; transform: scale(1.1); }
+}
+
+/* Mobile responsive */
+@media (max-width: 480px) {
+  .overlay { padding: 25px; }
+  .titre { font-size: 20px; }
+  .slogan { font-size: 14px; }
+  #goMap { font-size: 16px; padding: 12px 22px; }
 }
