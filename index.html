@@ -1,29 +1,25 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Restaurants Vietnamiens à Abidjan</title>
-
-  <!-- Feuille de style Leaflet (chargée depuis Internet) -->
- <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-     crossorigin=""/>
-
-  <!-- Ton style perso -->
-  <link rel="stylesheet" href="styles.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Plateforme Restaurants Abidjan</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
+<body class="accueil">
+  <div class="overlay">
+    <h1 class="titre">Plateforme des Restaurants de la ville d’Abidjan 🇨🇮🍜</h1>
+    <button id="goMap">Aller sur la carte</button>
+  </div>
 
-<body>
-  <h2>Restaurants Vietnamiens à Abidjan 🇻🇳🍜</h2>
-   <div id="map"></div>
-
-  <!-- Script Leaflet (chargé depuis Internet) -->
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-     crossorigin=""></script>
-
-  <!-- Ton propre script -->
-  <script src="main.js"></script>
+  <script>
+    document.getElementById("goMap").addEventListener("click", () => {
+      const overlay = document.querySelector(".overlay");
+      overlay.classList.add("fade-out"); // Lance l'animation de sortie
+      setTimeout(() => {
+        window.location.href = "map.html"; // Redirige après 1,2s
+      }, 1200);
+    });
+  </script>
 </body>
 </html>
