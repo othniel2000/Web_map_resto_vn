@@ -164,10 +164,12 @@ body.accueil::before {
   margin-bottom: 15px;
   min-height: 50px;
   border-right: 2px solid #6cd0f1;
-  white-space: nowrap;
-  overflow: hidden;
+  white-space: normal; /* ✅ autorise les retours à la ligne */
+  overflow: visible;   /* ✅ le texte ne sera plus coupé */
+  word-wrap: break-word; /* ✅ casse les mots longs si besoin */
   animation: cursorBlink 0.8s infinite;
 }
+
 
 /* Slogan (apparaît après typing) */
 .slogan {
