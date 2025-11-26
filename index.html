@@ -4,18 +4,26 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Plateforme Restaurants Abidjan</title>
+  <meta name="description" content="Carte interactive des restaurants vietnamiens d'Abidjan — localisation, itinéraires et informations pratiques.">
+  <link rel="icon" href="favicon.ico">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body class="accueil">
   <div class="overlay">
     <h1 class="titre" id="typedText"></h1>
     <p class="slogan" id="slogan">Découvrez la situation géographique des restaurants Vietnamiens d’Abidjan sur une carte interactive 🍽️</p>
-    <button id="goMap">Aller sur la carte</button>
+    <button id="goMap" role="button" aria-label="Aller sur la carte">Aller sur la carte</button>
   </div>
+
+  <noscript>
+    <div style="padding:1em;background:#fff3cd;color:#856404;text-align:center;border:1px solid #ffeeba;margin:12px;">
+      JavaScript est désactivé dans votre navigateur. Pour voir la carte et les fonctionnalités interactives, activez JavaScript ou utilisez un navigateur moderne.
+    </div>
+  </noscript>
 
   <script>
     // Effet "typing" pour le titre
-    const text = "Plateforme des Restaurants de la ville d’Abidjan 🇨🇮🍜";
+    const text = "Plateforme des Restaurants Vietnamien de la ville d’Abidjan 🇨🇮🍜";
     let i = 0;
     const speed = 80;
     const typedText = document.getElementById("typedText");
@@ -30,7 +38,7 @@
         document.getElementById("slogan").classList.add("show");
       }
     }
-    window.onload = typeWriter;
+  document.addEventListener('DOMContentLoaded', typeWriter);
 
     // Animation avant redirection
     document.getElementById("goMap").addEventListener("click", () => {
