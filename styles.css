@@ -41,6 +41,24 @@ body {
 .leaflet-popup-content img { border-radius: 6px; display:block; margin: 0 auto 6px; }
 .leaflet-control-custom { background: var(--card-bg); border-radius: var(--radius); box-shadow: var(--shadow); padding: 8px; }
 
+/* === Restaurant popup custom style === */
+.restaurant-popup { width: 260px; font-family: "Segoe UI", Arial, sans-serif; color: #0f172a; }
+.restaurant-popup .rp-header { display:flex; align-items:center; gap:10px; padding-bottom:8px; border-bottom:1px solid rgba(15,23,42,0.06); }
+.restaurant-popup .rp-icon { width:48px; height:48px; border-radius:12px; background: linear-gradient(180deg,#fff,#f7f7f7); padding:6px; box-shadow: 0 4px 14px rgba(15,23,42,0.08); }
+.restaurant-popup .rp-title { font-weight:700; font-size:15px; line-height:1.1; }
+.restaurant-popup .rp-body { padding-top:8px; }
+.restaurant-popup .rp-props { max-height: 140px; overflow:auto; padding-right:4px; }
+.restaurant-popup .rp-row { display:flex; gap:6px; padding:6px 0; border-bottom:1px dashed rgba(0,0,0,0.03); }
+.restaurant-popup .rp-row:last-child { border-bottom: none; }
+.restaurant-popup .rp-key { flex:0 0 110px; color:var(--muted); font-size:13px; font-weight:600; }
+.restaurant-popup .rp-value { flex:1; font-size:13px; color:#111827; }
+.restaurant-popup .rp-note { margin-top:8px; font-size:12px; color:#6b7280; text-align:right; }
+
+/* Tweak popup container visuals */
+.leaflet-popup-content-wrapper { padding:12px !important; border-radius: 12px !important; }
+.leaflet-popup-tip { background: var(--card-bg) !important; }
+
+
 /* Toast notifications */
 #toast-container {
   position: fixed;
