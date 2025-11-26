@@ -2,6 +2,30 @@ const map = L.map("map").setView([5.34, -4.03], 12); // creation de map
 
 let restaurants = null; // ✅ variable globale vide pour l'utiliser partout
 
+// Helper: convertit une clé technique en label lisible
+function humanizeKey(key) {
+  if (!key) return '';
+  const k = String(key).trim();
+  const mapping = {
+    'Name': 'Nom', 'name': 'Nom', 'Nom': 'Nom', 'nom': 'Nom',
+    'Commune': 'Commune', 'commune': 'Commune',
+    'Quartier': 'Quartier', 'quartier': 'Quartier', 'quartier_id': 'Quartier',
+    'adresse': 'Adresse', 'address': 'Adresse', 'rue': 'Rue',
+    'phone': 'Téléphone', 'telephone': 'Téléphone', 'tel': 'Téléphone',
+    'email': 'Email', 'website': 'Site web', 'url': 'Site web',
+    'opening_hours': 'Horaires', 'hours': 'Horaires',
+    'type': 'Type', 'category': 'Catégorie',
+    'x': 'Lon', 'y': 'Lat', 'longitude': 'Lon', 'lat': 'Lat', 'latitude': 'Lat',
+    'note': 'Note', 'description': 'Description'
+  };
+  if (mapping[k]) return mapping[k];
+  // fallback: remove suffixes like _id, _code, replace _ and - with space, Title Case
+  let s = k.replace(/(_id|_code)$/i, '');
+  s = s.replace(/[_-]+/g, ' ');
+  s = s.split(' ').map(p => p.charAt(0).toUpperCase() + p.slice(1)).join(' ');
+  return s;
+}
+
 
 // --- Itinéraire OSRM 
 let routeLayer = null;
@@ -339,15 +363,39 @@ div.onclick = function (e) {
         const coords = feature.geometry.coordinates;
         // Construire le HTML du popup en listant toutes les propriétés
         const props = feature.properties || {};
-        const propsHtml = Object.keys(props).map(k => `<div><strong>${k}:</strong> ${props[k] ?? ''}</div>`).join('');
+        // Garder uniquement les propriétés renseignées (non nulles, non vides)
+        const entries = Object.entries(props || {}).filter(([k, v]) => v !== null && v !== undefined && String(v).trim() !== '');
+        let propsHtml = entries.map(([k, v]) => `
+          <div class="rp-row"><div class="rp-key">${humanizeKey(k)}</div><div class="rp-value">${v}</div></div>
+        `).join('');
+
+        // Si aucune propriété utile et que la géométrie existe, on affichera au moins les coordonnées
+        if (!propsHtml || propsHtml.trim() === '') {
+          if (feature.geometry && feature.geometry.coordinates) {
+            const [lon, lat] = feature.geometry.coordinates;
+            propsHtml = `<div class="rp-row"><div class="rp-key">Lat</div><div class="rp-value">${lat}</div></div><div class="rp-row"><div class="rp-key">Lon</div><div class="rp-value">${lon}</div></div>`;
+          }
+        } else {
+          // Si les coordonnées ne figurent pas encore dans les propriétés, on peut les ajouter discrètement en bas
+          const hasCoords = entries.some(([k]) => ['x','y','lat','lon','longitude','latitude'].includes(k.toLowerCase()));
+          if (!hasCoords && feature.geometry && feature.geometry.coordinates) {
+            const [lon, lat] = feature.geometry.coordinates;
+            propsHtml += `\n<div class="rp-row"><div class="rp-key">Lat</div><div class="rp-value">${lat}</div></div><div class="rp-row"><div class="rp-key">Lon</div><div class="rp-value">${lon}</div></div>`;
+          }
+        }
         const popupHtml = `
-          <div style="text-align:left;">
-            <div style="text-align:center;margin-bottom:6px;">
-              <img src="https://cdn-icons-png.flaticon.com/512/3448/3448610.png" alt="icône" width="32" height="32" />
+          <div class="restaurant-popup">
+            <div class="rp-header">
+              <img class="rp-icon" src="https://cdn-icons-png.flaticon.com/512/3448/3448610.png" alt="icône" width="44" height="44" />
+              <div class="rp-title">${props.Name || 'Restaurant'}</div>
             </div>
-            <div style="text-align:center"><b>${props.Name || 'Restaurant'}</b></div>
-            <div style="font-size:12px;margin-top:6px;">${propsHtml}</div>
-            <div style="margin-top:8px;font-size:12px;color:#666;"><em>Cliquez sur le marqueur pour plus d'actions.</em></div>
+            <div class="rp-body">
+              <div class="rp-props">${propsHtml}</div>
+              <div class="rp-note"><em>Cliquez sur le marqueur pour plus d'actions.</em></div>
+              <div class="rp-actions" style="margin-top:8px;text-align:right;">
+                <button class="rp-btn-itineraire" onclick="window.showRouteToRestaurant(${coords[1]},${coords[0]})" title="Itinéraire vers ce lieu">Itinéraire</button>
+              </div>
+            </div>
           </div>
         `;
         layer.bindPopup(popupHtml);
