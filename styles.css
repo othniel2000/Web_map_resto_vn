@@ -180,6 +180,46 @@ h2 {
   }
 }
 
+/* Responsive improvements for small devices */
+@media (max-width: 600px) {
+  /* Make map taller to use vertical space */
+  #map { height: calc(100vh - 56px) !important; }
+
+  /* Controls larger and touch-friendly */
+  .leaflet-control-custom, .leaflet-bar button { padding: 10px !important; min-width: 44px; min-height: 44px; }
+
+  /* Search control full width near top */
+  .leaflet-top.leaflet-right .leaflet-control-custom { right: 8px; left: auto; top: 8px; }
+  #search-global { width: 180px !important; }
+
+  /* Route panel: full-width bottom bar */
+  .route-panel { box-sizing: border-box !important; width: calc(100% - 16px) !important; left: 8px !important; right: 8px !important; bottom: 8px !important; position: absolute !important; z-index: 10000 !important; border-radius: 12px !important; }
+  .route-panel .rp-props { max-height: 80px !important; }
+
+  /* Marker list (legend) reduced and moved up to avoid covering route panel */
+  .leaflet-bottom.leaflet-right .leaflet-control-custom { right: 8px !important; bottom: 100px !important; width: 70% !important; max-width: 320px !important; }
+
+  /* Popup sizing: wider and centered, large typography */
+  .leaflet-popup-content-wrapper { max-width: 92vw !important; width: 92vw !important; }
+  .restaurant-popup { width: auto !important; }
+  .restaurant-popup .rp-title { font-size: 16px !important; }
+  .restaurant-popup .rp-row { padding: 8px 0 !important; }
+  .rp-btn-itineraire { padding: 10px 14px !important; font-size: 14px !important; }
+
+  /* Toasts centered at top for mobile */
+  #toast-container { left: 50%; transform: translateX(-50%); right: auto; top: 12px; }
+
+  /* Increase z-index of popup so it appears above bottom panels */
+  .leaflet-popup { z-index: 99999 !important; }
+}
+
+@media (max-width: 360px) {
+  /* Very small screens: shrink inputs and ensure no overflow */
+  #search-global { width: 140px !important; }
+  .leaflet-bottom.leaflet-right .leaflet-control-custom { width: 86% !important; }
+  .route-panel { font-size: 13px !important; padding: 8px !important; }
+}
+
 /* === Très grands écrans === */
 @media (min-width: 1400px) {
   #map { height: 92vh; }

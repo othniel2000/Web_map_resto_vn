@@ -2,6 +2,21 @@ const map = L.map("map").setView([5.34, -4.03], 12); // creation de map
 
 let restaurants = null; // ✅ variable globale vide pour l'utiliser partout
 
+// Détecte si l'utilisateur est sur mobile et ajoute la classe 'mobile' au body pour styles conditionnels
+function applyMobileClass() {
+  try {
+    if (window.matchMedia && window.matchMedia('(max-width: 600px)').matches) {
+      document.body.classList.add('mobile');
+    } else {
+      document.body.classList.remove('mobile');
+    }
+  } catch (e) {
+    // ignore
+  }
+}
+applyMobileClass();
+window.addEventListener('resize', applyMobileClass);
+
 // Helper: convertit une clé technique en label lisible
 function humanizeKey(key) {
   if (!key) return '';
