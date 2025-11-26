@@ -1,4 +1,52 @@
 /* === Style global === */
+/* DESIGN — variables and UI tweaks (non-destructive) */
+:root {
+  --bg: #fafafa;
+  --primary: #2a9df4;
+  --accent: #ff6b3d;
+  --muted: #6b7280;
+  --card-bg: #ffffff;
+  --shadow: 0 6px 18px rgba(15,23,42,0.08);
+  --radius: 10px;
+}
+
+/* Global typography using system stack (optionally add Google Font in index.html) */
+body {
+  color: #0f172a;
+  background: var(--bg);
+}
+
+/* Buttons and UI */
+.btn-primary, #goMap {
+  background: var(--primary);
+  color: #fff;
+  border-radius: var(--radius);
+  border: none;
+  padding: 10px 14px;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+}
+
+.btn-primary:hover, #goMap:hover {
+  filter: brightness(0.97);
+}
+
+/* Leaflet popup and control card style */
+.leaflet-popup-content-wrapper {
+  background: var(--card-bg) !important;
+  border-radius: calc(var(--radius) - 2px) !important;
+  box-shadow: var(--shadow) !important;
+  color: #111827 !important;
+}
+.leaflet-popup-content img { border-radius: 6px; display:block; margin: 0 auto 6px; }
+.leaflet-control-custom { background: var(--card-bg); border-radius: var(--radius); box-shadow: var(--shadow); padding: 8px; }
+
+/* Responsive helpers */
+@media (max-width: 600px) {
+  .leaflet-control-custom { padding: 6px; font-size: 14px; }
+}
+
+/* END DESIGN */
 body {
   margin: 0;
   font-family: "Segoe UI", Arial, sans-serif;
