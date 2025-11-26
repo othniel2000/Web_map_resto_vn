@@ -41,6 +41,33 @@ body {
 .leaflet-popup-content img { border-radius: 6px; display:block; margin: 0 auto 6px; }
 .leaflet-control-custom { background: var(--card-bg); border-radius: var(--radius); box-shadow: var(--shadow); padding: 8px; }
 
+/* Toast notifications */
+#toast-container {
+  position: fixed;
+  right: 16px;
+  top: 16px;
+  z-index: 99999;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.app-toast {
+  background: rgba(17,24,39,0.95);
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 8px;
+  box-shadow: 0 6px 18px rgba(15,23,42,0.2);
+  font-size: 13px;
+  opacity: 1;
+  transition: transform 0.35s ease, opacity 0.35s ease;
+}
+.app-toast.hide { transform: translateY(-10px); opacity: 0; }
+
+/* Route panel tweaks */
+.route-panel { min-width: 220px; padding: 10px; }
+.route-panel select { border-radius: 6px; border: 1px solid rgba(0,0,0,0.08); }
+.route-panel #clear-route { background: transparent; border: none; cursor: pointer; }
+
 /* Responsive helpers */
 @media (max-width: 600px) {
   .leaflet-control-custom { padding: 6px; font-size: 14px; }

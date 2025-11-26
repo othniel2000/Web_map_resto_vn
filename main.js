@@ -5,15 +5,12 @@ let restaurants = null; // ✅ variable globale vide pour l'utiliser partout
 
 // --- Itinéraire OSRM 
 let routeLayer = null;
+// transport mode choisi via UI (remplace le prompt)
+let selectedTransportMode = 'driving';
 function showRouteToRestaurant(destLat, destLng) {
-  // Choix du mode de transport
-  const mode = prompt('Mode de transport : "driving" (voiture), "cycling" (vélo), "walking" (piéton), "motorcycle" (moto)', 'driving');
-  if (!mode || !['driving','cycling','walking','motorcycle'].includes(mode)) {
-    alert('Mode non reconnu.');
-    return;
-  }
   // Détermination du point de départ
   function launchRoute(startLat, startLng) {
+    const mode = selectedTransportMode || 'driving';
     const osrmMode = (mode === 'motorcycle') ? 'driving' : mode;
     const url = `https://router.project-osrm.org/route/v1/${osrmMode}/${startLng},${startLat};${destLng},${destLat}?overview=full&geometries=geojson`;
     fetch(url)
@@ -23,7 +20,7 @@ function showRouteToRestaurant(destLat, destLng) {
           map.removeLayer(routeLayer);
         }
         if (!data.routes || !data.routes[0]) {
-          alert('Aucun itinéraire trouvé.');
+          showToast('Aucun itinéraire trouvé.');
           return;
         }
         routeLayer = L.geoJSON(data.routes[0].geometry, {
@@ -35,19 +32,43 @@ function showRouteToRestaurant(destLat, destLng) {
         const distance = data.routes[0].distance; // en mètres
         const minutes = Math.round(duration / 60);
         const km = (distance / 1000).toFixed(2);
-        alert('Distance : ' + km + ' km\nDurée estimée : ' + minutes + ' min');
+        // Afficher dans le panneau d'itinéraire
+        const infoDiv = document.getElementById('route-info');
+        if (infoDiv) {
+          infoDiv.innerHTML = `<div><strong>Distance :</strong> ${km} km</div><div><strong>Durée :</strong> ${minutes} min</div>`;
+        }
+        showToast(`Itinéraire tracé — ${km} km, ${minutes} min`);
       })
-      .catch(() => alert('Erreur lors de la récupération de l\'itinéraire.'));
+      .catch(() => showToast('Erreur lors de la récupération de l\'itinéraire.'));
   }
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(function(pos) {
       launchRoute(pos.coords.latitude, pos.coords.longitude);
     }, function() {
-      alert('Impossible de récupérer votre position.');
+      showToast('Impossible de récupérer votre position.');
     });
   } else {
-    alert("La géolocalisation n'est pas supportée.");
+    showToast("La géolocalisation n'est pas supportée.");
   }
+}
+
+// --- Toast simple pour feedback non intrusif ---
+function showToast(message, timeout = 3500) {
+  const containerId = 'toast-container';
+  let container = document.getElementById(containerId);
+  if (!container) {
+    container = document.createElement('div');
+    container.id = containerId;
+    document.body.appendChild(container);
+  }
+  const t = document.createElement('div');
+  t.className = 'app-toast';
+  t.textContent = message;
+  container.appendChild(t);
+  setTimeout(() => {
+    t.classList.add('hide');
+    setTimeout(() => t.remove(), 500);
+  }, timeout);
 }
 
 // Contrôle de recherche indépendant (en haut à droite)
@@ -144,9 +165,101 @@ if (navigator.geolocation) {
   });
 }
 
+// --- Contrôle Itinéraire (standalone) ---
+let selectDestinationMode = false;
+const itineraryControl = L.control({ position: 'topright' });
+itineraryControl.onAdd = function () {
+  const btn = L.DomUtil.create('button', 'leaflet-bar leaflet-control leaflet-control-custom');
+  btn.id = 'itineraryBtn';
+  btn.innerHTML = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 6.5L21 3l-3.5 6.5z"></path><path d="M3 11l6 6 11-11"></path></svg>`;
+  btn.title = 'Activer le mode sélection d\'itinéraire';
+  btn.setAttribute('aria-label', 'Itinéraire');
+  btn.style.backgroundColor = 'white';
+  btn.style.width = '40px';
+  btn.style.height = '40px';
+  btn.style.lineHeight = '40px';
+  btn.style.textAlign = 'center';
+  btn.style.fontSize = '12px';
+  btn.onclick = function (e) {
+    L.DomEvent.stopPropagation(e);
+    selectDestinationMode = !selectDestinationMode;
+    updateItineraryButton();
+    if (selectDestinationMode) {
+      showToast('Mode itinéraire activé : cliquez sur un restaurant pour choisir la destination.');
+    } else {
+      showToast('Mode itinéraire désactivé.');
+    }
+  };
+  return btn;
+};
+itineraryControl.addTo(map);
+
+function updateItineraryButton() {
+  const btn = document.getElementById('itineraryBtn');
+  if (!btn) return;
+  if (selectDestinationMode) {
+    btn.style.backgroundColor = '#ffdede';
+  } else {
+    btn.style.backgroundColor = 'white';
+  }
+}
+
+// --- Panneau d'itinéraire (sélecteur de mode + infos) ---
+const routePanelControl = L.control({ position: 'bottomleft' });
+routePanelControl.onAdd = function () {
+  const div = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom route-panel');
+  div.id = 'route-panel';
+  div.innerHTML = `
+    <div style="display:flex;align-items:center;gap:8px;">
+      <label for="route-mode" style="font-size:13px;margin-right:6px;">Mode</label>
+      <select id="route-mode" style="padding:4px;font-size:13px;">
+        <option value="driving">Voiture</option>
+        <option value="cycling">Vélo</option>
+        <option value="walking">Marche</option>
+        <option value="motorcycle">Moto</option>
+      </select>
+      <button id="clear-route" title="Effacer l'itinéraire" style="margin-left:8px;padding:6px;">✖</button>
+    </div>
+    <div id="route-info" style="margin-top:8px;font-size:13px;color:#111;min-width:180px;">Aucun itinéraire</div>
+  `;
+
+  // Empêcher la propagation des events pour ne pas faire bouger la carte
+  L.DomEvent.disableClickPropagation(div);
+  setTimeout(() => {
+    const select = document.getElementById('route-mode');
+    if (select) {
+      select.value = selectedTransportMode;
+      select.addEventListener('change', function () {
+        selectedTransportMode = this.value;
+        showToast('Mode de transport: ' + (this.selectedOptions[0]?.text || this.value));
+      });
+    }
+    const clearBtn = document.getElementById('clear-route');
+    if (clearBtn) {
+      clearBtn.addEventListener('click', function () {
+        if (routeLayer) {
+          map.removeLayer(routeLayer);
+          routeLayer = null;
+        }
+        const info = document.getElementById('route-info');
+        if (info) info.innerHTML = 'Aucun itinéraire';
+        showToast('Itinéraire effacé');
+      });
+    }
+  }, 0);
+
+  return div;
+};
+routePanelControl.addTo(map);
+
 // Chargement du GeoJSON externe et intégration à la carte
+// Utilise explicitement le fichier confirmé par l'utilisateur
 fetch('Restauarant_Vietnamien.geojson.1.geojson')
-  .then(response => response.json())
+  .then(response => {
+    if (!response.ok) throw new Error('HTTP ' + response.status);
+    return response.json();
+  })
   .then(data => {
     restaurants = data;
     // Création d'un contrôle de liste des restaurants (légende en bas à droite)
@@ -219,23 +332,47 @@ div.onclick = function (e) {
       });
     }
 
-    // Ajout des points GeoJSON avec icône personnalisée, image dans le popup et bouton itinéraire
+    // Ajout des points GeoJSON avec icône personnalisée.
+    // Les popups affichent désormais automatiquement toutes les propriétés de l'objet GeoJSON.
     L.geoJSON(restaurants, {
       onEachFeature: (feature, layer) => {
         const coords = feature.geometry.coordinates;
-        layer.bindPopup(`
-          <div style="text-align:center;">
-            <img src="https://cdn-icons-png.flaticon.com/512/3448/3448610.png" alt="Aperçu icône restaurant" width="32" height="32" /><br/>
-            <b>${feature.properties.Name}</b><br/>
-            <small>${feature.properties.Commune}, ${feature.properties.Quartier}</small><br/>
-            <button onclick=\"window.showRouteToRestaurant(${coords[1]},${coords[0]})\">Itinéraire depuis ma position</button>
+        // Construire le HTML du popup en listant toutes les propriétés
+        const props = feature.properties || {};
+        const propsHtml = Object.keys(props).map(k => `<div><strong>${k}:</strong> ${props[k] ?? ''}</div>`).join('');
+        const popupHtml = `
+          <div style="text-align:left;">
+            <div style="text-align:center;margin-bottom:6px;">
+              <img src="https://cdn-icons-png.flaticon.com/512/3448/3448610.png" alt="icône" width="32" height="32" />
+            </div>
+            <div style="text-align:center"><b>${props.Name || 'Restaurant'}</b></div>
+            <div style="font-size:12px;margin-top:6px;">${propsHtml}</div>
+            <div style="margin-top:8px;font-size:12px;color:#666;"><em>Cliquez sur le marqueur pour plus d'actions.</em></div>
           </div>
-        `);
+        `;
+        layer.bindPopup(popupHtml);
+
+        // Si le mode sélection d'itinéraire est actif, cliquer sur le marqueur déclenche le calcul d'itinéraire
+        layer.on('click', function (e) {
+          if (selectDestinationMode) {
+            // Eviter l'ouverture du popup lorsque l'on sélectionne comme destination
+            e.originalEvent && e.originalEvent.preventDefault && e.originalEvent.preventDefault();
+            // Lancer l'itinéraire
+            showRouteToRestaurant(coords[1], coords[0]);
+            // Désactiver le mode sélection et mettre à jour le contrôle
+            selectDestinationMode = false;
+            updateItineraryButton();
+          }
+        });
       },
       pointToLayer: (feature, latlng) => {
-        return L.marker(latlng, { icon: restaurantIcon, title: feature.properties.Name });
+        return L.marker(latlng, { icon: restaurantIcon, title: feature.properties && feature.properties.Name });
       },
     }).addTo(map);
+  })
+  .catch(err => {
+    console.error('Impossible de charger le GeoJSON :', err);
+    showToast('Erreur: impossible de charger "Restauarant_Vietnamien.geojson.1.geojson". Assurez-vous de servir le site via HTTP (Live Server) et que le fichier existe.');
   });
 
   // S'assurer que la carte s'adapte quand on redimensionne la fenêtre
