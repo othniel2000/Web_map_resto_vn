@@ -162,6 +162,9 @@ L.control.layers({
   "Hybride (Satellite + Lieux)": hybrid
 }, null, { position: 'topleft' }).addTo(map);
 
+// Échelle métrique en bas à gauche
+L.control.scale({ position: 'bottomleft', metric: true, imperial: false, maxWidth: 200 }).addTo(map);
+
 // Le contrôle de zoom par défaut est déjà présent (position par défaut : topleft)
 
 // Ajout d'un contrôle de localisation (si supporté par le navigateur)
