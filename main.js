@@ -171,11 +171,63 @@ const hybrid = L.layerGroup([satellite, labels]);
 osm.addTo(map);
 
 // Contrôle de couches (fond OSM, Satellite ou Hybride)
+
+/**
+ * Overlay factice pour le contrôle des couches
+ * -------------------------------------------------
+ * Objectif : fournir une case à cocher dans le contrôle
+ * `L.control.layers` pour afficher/masquer la liste des
+ * restaurants qui est implémentée par `listControl` (un
+ * contrôle Leaflet personnalisé positionné en bas à droite).
+ *
+ * Technique : on crée un `L.layerGroup()` vide nommé
+ * `listToggleLayer` et on l'ajoute à la liste des overlays du
+ * `L.control.layers`. Quand l'utilisateur coche cette case,
+ * un événement `overlayadd` est émis par la carte ; nous
+ * écoutons cet événement et appelons `listControl.addTo(map)`
+ * pour afficher la liste. Quand l'utilisateur décoche la
+ * case, l'événement `overlayremove` nous permet de retirer
+ * le contrôle (`map.removeControl(listControl)`).
+ *
+ * Avantages : aucune modification structurelle de la liste
+ * (positionnement en bas à droite inchangé), et l'intégration
+ * est naturelle dans le panneau des couches.
+ */
+const listToggleLayer = L.layerGroup();
+
 L.control.layers({
   "OpenStreetMap": osm,
   "Satellite": satellite,
   "Hybride (Satellite + Lieux)": hybrid
-}, null, { position: 'topleft' }).addTo(map);
+}, { "Liste Restaurants": listToggleLayer }, { position: 'topleft' }).addTo(map);
+
+// Gestion de l'affichage de la liste via les événements overlayadd/overlayremove
+// Quand l'utilisateur coche "Liste Restaurants" dans le contrôle des couches,
+// la carte émet 'overlayadd' avec la couche correspondante ; nous affichons
+// alors le `listControl` (le panel en bas à droite). Quand il décoche, nous
+// le retirons. Cette logique permet d'avoir un overlay 'virtuel' dans la
+// liste des couches sans dupliquer les éléments.
+map.on('overlayadd', function (e) {
+  if (e.layer === listToggleLayer && typeof listControl !== 'undefined' && listControl) {
+    // Si l'overlay factice est actif sur la carte, afficher la liste
+    if (map.hasLayer && map.hasLayer(listToggleLayer)) {
+      listControl.addTo(map);
+    }
+  }
+});
+
+map.on('overlayremove', function (e) {
+  if (e.layer === listToggleLayer && typeof listControl !== 'undefined' && listControl) {
+    // Retirer le contrôle de liste si la case a été décochée
+    try {
+      map.removeControl(listControl);
+    } catch (err) {
+      // ignore : si le contrôle n'est pas présent, on continue silencieusement
+    }
+  }
+});
+// Activer la liste par défaut : ajoute l'overlay factice à la carte
+listToggleLayer.addTo(map);
 
 // Échelle métrique en bas à gauche
 L.control.scale({ position: 'bottomleft', metric: true, imperial: false, maxWidth: 200 }).addTo(map);
