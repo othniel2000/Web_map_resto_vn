@@ -263,12 +263,21 @@ h2 {
   .leaflet-top.leaflet-right .leaflet-control-custom { right: 8px; left: auto; top: 8px; }
   #search-global { width: 180px !important; }
 
+  /* On small screens hide the visible search input to save space; JS toggle will show it when needed */
+  #search-global { display: none; }
+  /* If the control wrapper has only the search input, reduce its footprint */
+  .leaflet-top.leaflet-right .leaflet-control-custom input#search-global { display: none; }
+
   /* Route panel: full-width bottom bar */
   .route-panel { box-sizing: border-box !important; width: calc(100% - 16px) !important; left: 8px !important; right: 8px !important; bottom: 8px !important; position: absolute !important; z-index: 10000 !important; border-radius: 12px !important; }
   .route-panel .rp-props { max-height: 80px !important; }
 
   /* Marker list (legend) reduced and moved up to avoid covering route panel */
   .leaflet-bottom.leaflet-right .leaflet-control-custom { right: 8px !important; bottom: 100px !important; width: 70% !important; max-width: 320px !important; }
+
+  /* Make top-right controls more compact on small screens */
+  .leaflet-top.leaflet-right { gap: 6px !important; }
+  .leaflet-top.leaflet-right .leaflet-control-custom, .leaflet-top.leaflet-right .leaflet-bar { transform: translateZ(0); }
 
   /* Popup sizing: wider and centered, large typography */
   .leaflet-popup-content-wrapper { max-width: 92vw !important; width: 92vw !important; }
@@ -283,6 +292,21 @@ h2 {
   /* Increase z-index of popup so it appears above bottom panels */
   .leaflet-popup { z-index: 99999 !important; }
 }
+
+/* Further small-screen control tweaks: shrink itinerary button and locate button */
+@media (max-width: 600px) {
+  #itineraryBtn { width:34px !important; height:34px !important; min-width:34px !important; min-height:34px !important; padding:6px !important; font-size:12px !important; }
+  #itineraryBtn svg { width:18px !important; height:18px !important; }
+  .leaflet-top.leaflet-right .leaflet-bar button { padding:6px !important; }
+  /* reduce visual footprint of locate button */
+  .leaflet-top.leaflet-right button[title="Me localiser"] { width:34px !important; height:34px !important; }
+}
+
+/* Styles for the new compact controls */
+.list-toggle-btn { padding:6px 8px !important; width:36px !important; height:36px !important; display:inline-flex !important; align-items:center; justify-content:center; }
+.list-toggle-btn svg { display:block; }
+.search-toggle-btn { padding:6px 8px !important; width:36px !important; height:36px !important; display:inline-flex !important; align-items:center; justify-content:center; font-size:16px; }
+.search-wrap input#search-global { width:160px; }
 
 /* Medium devices: make controls slightly larger for touch interfaces */
 @media (min-width: 601px) and (max-width: 1023px) {

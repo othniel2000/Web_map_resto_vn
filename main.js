@@ -113,36 +113,60 @@ function showToast(message, timeout = 3500) {
 // Contrôle de recherche indépendant (en haut à droite)
 const searchControl = L.control({ position: 'topright' });
 searchControl.onAdd = function () {
-  const div = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
+  const div = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom search-control');
   div.style.background = 'white';
   div.style.padding = '6px';
   div.style.margin = '6px';
   div.style.boxShadow = '0 2px 6px rgba(0,0,0,0.15)';
-  div.innerHTML = '<input type="text" id="search-global" placeholder="Rechercher un nom..." style="width:160px;padding:2px;" />';
+  // button toggles the visibility of the input; input is initially hidden on small screens
+  div.innerHTML = `
+    <div class="search-wrap" style="display:flex;align-items:center;gap:6px;">
+      <button id="search-toggle" class="search-toggle-btn" title="Rechercher" aria-label="Rechercher">🔍</button>
+      <input type="text" id="search-global" placeholder="Rechercher un nom..." style="width:160px;padding:4px;display:none;" />
+    </div>
+  `;
   setTimeout(() => {
     const input = div.querySelector('#search-global');
-    input.addEventListener('keydown', function(e) {
-      if (e.key === 'Enter') {
-        const val = this.value.trim().toLowerCase();
-        const found = restaurants.features.find(f => 
-  f.properties.Name && f.properties.Name.toLowerCase().includes(val)
-);
-
-
-        if (found) {
-          const coords = found.geometry.coordinates;
-          map.setView([coords[1], coords[0]], 16);
-          // Ouvre le popup si le marker existe
-          map.eachLayer(layer => {
-            if (layer.getLatLng && layer.getLatLng().lat === coords[1] && layer.getLatLng().lng === coords[0]) {
-              if (layer.openPopup) layer.openPopup();
-            }
-          });
+    const toggle = div.querySelector('#search-toggle');
+    if (toggle) {
+      toggle.addEventListener('click', (ev) => {
+        ev.stopPropagation();
+        if (!input) return;
+        if (input.style.display === 'none' || getComputedStyle(input).display === 'none') {
+          input.style.display = 'inline-block';
+          input.focus();
         } else {
-          alert('Aucun restaurant trouvé avec ce nom.');
+          input.style.display = 'none';
         }
-      }
-    });
+      });
+    }
+    if (input) {
+      input.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+          const val = this.value.trim().toLowerCase();
+          if (!restaurants || !restaurants.features) return;
+          const found = restaurants.features.find(f => f.properties && f.properties.Name && f.properties.Name.toLowerCase().includes(val));
+          if (found) {
+            const coords = found.geometry.coordinates;
+            map.setView([coords[1], coords[0]], 16);
+            // Ouvre le popup si le marker existe
+            map.eachLayer(layer => {
+              if (layer.getLatLng && layer.getLatLng().lat === coords[1] && layer.getLatLng().lng === coords[0]) {
+                if (layer.openPopup) layer.openPopup();
+              }
+            });
+          } else {
+            alert('Aucun restaurant trouvé avec ce nom.');
+          }
+        }
+      });
+      // hide input if it loses focus and is empty (mobile UX)
+      input.addEventListener('blur', function() {
+        setTimeout(() => {
+          if (this.value.trim() === '') this.style.display = 'none';
+        }, 150);
+      });
+    }
   }, 0);
   return div;
 };
@@ -172,62 +196,18 @@ osm.addTo(map);
 
 // Contrôle de couches (fond OSM, Satellite ou Hybride)
 
-/**
- * Overlay factice pour le contrôle des couches
- * -------------------------------------------------
- * Objectif : fournir une case à cocher dans le contrôle
- * `L.control.layers` pour afficher/masquer la liste des
- * restaurants qui est implémentée par `listControl` (un
- * contrôle Leaflet personnalisé positionné en bas à droite).
- *
- * Technique : on crée un `L.layerGroup()` vide nommé
- * `listToggleLayer` et on l'ajoute à la liste des overlays du
- * `L.control.layers`. Quand l'utilisateur coche cette case,
- * un événement `overlayadd` est émis par la carte ; nous
- * écoutons cet événement et appelons `listControl.addTo(map)`
- * pour afficher la liste. Quand l'utilisateur décoche la
- * case, l'événement `overlayremove` nous permet de retirer
- * le contrôle (`map.removeControl(listControl)`).
- *
- * Avantages : aucune modification structurelle de la liste
- * (positionnement en bas à droite inchangé), et l'intégration
- * est naturelle dans le panneau des couches.
- */
-const listToggleLayer = L.layerGroup();
-
+// Contrôle des couches (seulement les fonds ici). Nous retirons l'overlay
+// "Liste Restaurants" — la liste sera ouverte via un bouton dédié.
 L.control.layers({
   "OpenStreetMap": osm,
   "Satellite": satellite,
   "Hybride (Satellite + Lieux)": hybrid
-}, { "Liste Restaurants": listToggleLayer }, { position: 'topleft' }).addTo(map);
+}, null, { position: 'topleft' }).addTo(map);
 
-// Gestion de l'affichage de la liste via les événements overlayadd/overlayremove
-// Quand l'utilisateur coche "Liste Restaurants" dans le contrôle des couches,
-// la carte émet 'overlayadd' avec la couche correspondante ; nous affichons
-// alors le `listControl` (le panel en bas à droite). Quand il décoche, nous
-// le retirons. Cette logique permet d'avoir un overlay 'virtuel' dans la
-// liste des couches sans dupliquer les éléments.
-map.on('overlayadd', function (e) {
-  if (e.layer === listToggleLayer && typeof listControl !== 'undefined' && listControl) {
-    // Si l'overlay factice est actif sur la carte, afficher la liste
-    if (map.hasLayer && map.hasLayer(listToggleLayer)) {
-      listControl.addTo(map);
-    }
-  }
-});
-
-map.on('overlayremove', function (e) {
-  if (e.layer === listToggleLayer && typeof listControl !== 'undefined' && listControl) {
-    // Retirer le contrôle de liste si la case a été décochée
-    try {
-      map.removeControl(listControl);
-    } catch (err) {
-      // ignore : si le contrôle n'est pas présent, on continue silencieusement
-    }
-  }
-});
-// La liste n'est pas activée par défaut — l'utilisateur doit cocher l'overlay pour l'afficher
-// (ne pas appeler listToggleLayer.addTo(map) ici)
+// Variable pour le contrôle de liste (sera initialisée lors du chargement du GeoJSON)
+let listControl = null;
+let isListVisible = false;
+let pendingListOpen = false; // si l'utilisateur clique sur toggle avant le chargement
 
 // Échelle métrique en bas à gauche
 L.control.scale({ position: 'bottomleft', metric: true, imperial: false, maxWidth: 200 }).addTo(map);
@@ -362,6 +342,40 @@ function adjustPanelsForDevice() {
 adjustPanelsForDevice();
 window.addEventListener('resize', adjustPanelsForDevice);
 
+// Petit bouton flottant pour ouvrir/fermer la liste des restaurants (toujours visible)
+const listToggleBtn = L.control({ position: 'bottomright' });
+listToggleBtn.onAdd = function () {
+  const b = L.DomUtil.create('button', 'leaflet-bar leaflet-control leaflet-control-custom list-toggle-btn');
+  b.innerHTML = `
+    <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false">
+      <path d="M3 6h18M3 12h18M3 18h18" stroke="#111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"></path>
+    </svg>`;
+  b.title = 'Afficher la liste des restaurants';
+  b.style.background = 'white';
+  b.style.padding = '6px 8px';
+  b.style.borderRadius = '8px';
+  b.style.boxShadow = '0 2px 8px rgba(0,0,0,0.12)';
+  b.style.cursor = 'pointer';
+  b.onclick = function (e) {
+    L.DomEvent.stopPropagation(e);
+    // Si le contrôle n'est pas encore prêt (chargement du GeoJSON), noter la demande
+    if (!listControl) {
+      pendingListOpen = !pendingListOpen;
+      showToast('Liste en cours de chargement...');
+      return;
+    }
+    if (!isListVisible) {
+      listControl.addTo(map);
+      isListVisible = true;
+    } else {
+      try { map.removeControl(listControl); } catch (err) { /* ignore */ }
+      isListVisible = false;
+    }
+  };
+  return b;
+};
+listToggleBtn.addTo(map);
+
 // Chargement du GeoJSON externe et intégration à la carte
 // Utilise explicitement le fichier confirmé par l'utilisateur
 fetch('Restauarant_Vietnamien.geojson.1.geojson')
@@ -372,7 +386,7 @@ fetch('Restauarant_Vietnamien.geojson.1.geojson')
   .then(data => {
     restaurants = data;
     // Création d'un contrôle de liste des restaurants (légende en bas à droite)
-   const listControl = L.control({ position: 'bottomright' });
+  listControl = L.control({ position: 'bottomright' });
 listControl.onAdd = function () {
   const div = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
   div.style.background = 'rgba(255, 255, 255, 0.95)';
@@ -380,6 +394,7 @@ listControl.onAdd = function () {
   div.style.border = '1px solid rgba(0,0,0,0.1)';
   div.style.borderRadius = '12px';
   div.style.padding = '10px 15px';
+  // Par défaut largeur fixe sur desktop, mais on adapte pour mobile ci-dessous
   div.style.width = '240px';
   div.style.maxHeight = '35vh';
   div.style.overflowY = 'auto';
@@ -439,8 +454,20 @@ listControl.onAdd = function () {
         header.addEventListener('touchstart', (e) => { e.preventDefault(); setExpanded(!box.classList.contains('expanded')); });
       }
 
-      // Initial state: collapsed by default — l'utilisateur ouvre la liste via le contrôle des couches
+      // Initial state: collapsed by default — l'utilisateur ouvre la liste via le bouton
       setExpanded(false);
+
+      // Si on est sur mobile, adapter le style pour faire une bottom-sheet pleine largeur
+      if (window.matchMedia && window.matchMedia('(max-width: 600px)').matches) {
+        div.style.width = '100%';
+        div.style.left = '0';
+        div.style.right = '0';
+        div.style.marginRight = '0';
+        div.style.marginBottom = '0';
+        div.style.borderRadius = '0';
+        div.style.maxHeight = '55vh';
+        div.style.padding = '8px';
+      }
 
       // Item click: recentre et ouvre le popup
       const items = div.querySelectorAll('.list-item');
