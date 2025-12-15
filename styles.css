@@ -94,6 +94,23 @@ body.dark { --bg: #0b1220; --card-bg: #0f1724; --primary: #5cc4ff; --accent: #ff
 .route-panel select { border-radius: 6px; border: 1px solid rgba(0,0,0,0.08); }
 .route-panel #clear-route { background: transparent; border: none; cursor: pointer; }
 
+/* Styles pour la boîte repliable de la liste des restaurants */
+.list-box { width: 260px; background: var(--card-bg); border-radius: 12px; box-shadow: var(--shadow); overflow: hidden; }
+.list-box .list-box-header { display:flex; justify-content:space-between; align-items:center; padding:10px 12px; cursor:pointer; border-bottom:1px solid rgba(0,0,0,0.06); }
+.list-box .list-box-title { font-weight:700; color:var(--accent); font-size:14px; }
+.list-box .list-box-toggle { font-size:14px; color:var(--muted); }
+.list-box .list-box-content { padding:6px 8px; }
+.list-box .list-box-items { max-height: 40vh; overflow:auto; }
+.list-box .list-item { transition: background 0.15s ease; }
+.list-box .list-item:hover { background: rgba(255,224,224,0.6); }
+.list-box.collapsed .list-box-content { display:none; }
+.list-box.expanded .list-box-content { display:block; }
+
+/* Mobile tweaks: box full width */
+@media (max-width: 600px) {
+  .list-box { width: 92vw !important; }
+}
+
 /* Responsive helpers */
 @media (max-width: 600px) {
   .leaflet-control-custom { padding: 6px; font-size: 14px; }

@@ -376,20 +376,69 @@ listControl.onAdd = function () {
   div.style.marginRight = '10px';
 
   div.innerHTML = `
-    <h3 style="margin-top:0;color:#d32f2f;text-align:center;">🍴 Restaurants Vietnamiens</h3>
-    <ul style="margin:0;padding-left:20px;list-style:none;line-height:1.6;">
-      ${restaurants.features.map(f => `
-        <li 
-          style="cursor:pointer;background:url('https://cdn-icons-png.flaticon.com/512/859/859270.png') no-repeat left center;
-          background-size:18px;padding-left:28px;margin:4px 0;border-radius:5px;transition:0.3s;"
-          onmouseover="this.style.backgroundColor='rgba(255, 224, 224, 0.6)'"
-          onmouseout="this.style.backgroundColor='transparent'"
-          data-coords="${f.geometry.coordinates[1]},${f.geometry.coordinates[0]}"
-        >
-          ${f.properties.Name}
-        </li>`).join('')}
-    </ul>
+    <div class="list-box collapsed">
+      <div class="list-box-header" role="button" tabindex="0" aria-expanded="false">
+        <div class="list-box-title">Liste des restaurants vietnamiens</div>
+        <div class="list-box-toggle">▸</div>
+      </div>
+      <div class="list-box-content" style="display:none;">
+        <ul class="list-box-items" style="margin:0;padding-left:6px;list-style:none;line-height:1.6;">
+          ${restaurants.features.map(f => `
+            <li class="list-item" data-coords="${f.geometry.coordinates[1]},${f.geometry.coordinates[0]}" style="cursor:pointer;display:flex;align-items:center;gap:8px;padding:6px;border-bottom:1px solid rgba(0,0,0,0.04);">
+              <img src="https://cdn-icons-png.flaticon.com/512/859/859270.png" alt="" style="width:20px;height:20px;flex:0 0 20px;"/>
+              <span class="list-item-label">${f.properties.Name}</span>
+            </li>
+          `).join('')}
+        </ul>
+      </div>
+    </div>
   `;
+
+    // Setup: rendre la boîte repliable/expandable
+    setTimeout(() => {
+      const box = div.querySelector('.list-box');
+      const header = div.querySelector('.list-box-header');
+      const content = div.querySelector('.list-box-content');
+      const toggle = div.querySelector('.list-box-toggle');
+      function setExpanded(exp) {
+        if (!box) return;
+        if (exp) {
+          box.classList.remove('collapsed');
+          box.classList.add('expanded');
+          if (content) content.style.display = 'block';
+          if (toggle) toggle.textContent = '▾';
+          header.setAttribute('aria-expanded', 'true');
+        } else {
+          box.classList.remove('expanded');
+          box.classList.add('collapsed');
+          if (content) content.style.display = 'none';
+          if (toggle) toggle.textContent = '▸';
+          header.setAttribute('aria-expanded', 'false');
+        }
+      }
+      // Header click / key interaction
+      if (header) {
+        header.addEventListener('click', () => setExpanded(!box.classList.contains('expanded')));
+        header.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setExpanded(!box.classList.contains('expanded')); } });
+      }
+
+      // Item click: recentre et ouvre le popup
+      const items = div.querySelectorAll('.list-item');
+      items.forEach(it => {
+        it.addEventListener('click', function () {
+          const coords = this.getAttribute('data-coords').split(',');
+          const lat = parseFloat(coords[0]);
+          const lng = parseFloat(coords[1]);
+          map.setView([lat, lng], 16);
+          // ouvrir le popup correspondant si le marker existe
+          map.eachLayer(layer => {
+            if (layer.getLatLng && layer.getLatLng().lat === lat && layer.getLatLng().lng === lng) {
+              if (layer.openPopup) layer.openPopup();
+            }
+          });
+        });
+      });
+    }, 0);
 
 
 
