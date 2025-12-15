@@ -226,8 +226,8 @@ map.on('overlayremove', function (e) {
     }
   }
 });
-// Activer la liste par défaut : ajoute l'overlay factice à la carte
-listToggleLayer.addTo(map);
+// La liste n'est pas activée par défaut — l'utilisateur doit cocher l'overlay pour l'afficher
+// (ne pas appeler listToggleLayer.addTo(map) ici)
 
 // Échelle métrique en bas à gauche
 L.control.scale({ position: 'bottomleft', metric: true, imperial: false, maxWidth: 200 }).addTo(map);
@@ -439,9 +439,8 @@ listControl.onAdd = function () {
         header.addEventListener('touchstart', (e) => { e.preventDefault(); setExpanded(!box.classList.contains('expanded')); });
       }
 
-      // Set initial state according to device width: expanded on large screens, collapsed on small
-      const shouldExpandByDefault = (window.matchMedia && window.matchMedia('(min-width: 1024px)').matches);
-      setExpanded(shouldExpandByDefault);
+      // Initial state: collapsed by default — l'utilisateur ouvre la liste via le contrôle des couches
+      setExpanded(false);
 
       // Item click: recentre et ouvre le popup
       const items = div.querySelectorAll('.list-item');
@@ -475,7 +474,8 @@ div.onclick = function (e) {
 
       return div;
     };
-    listControl.addTo(map);
+    // Ne pas ajouter `listControl` automatiquement : l'affichage est contrôlé
+    // par l'overlay factice `listToggleLayer` via les événements overlayadd/overlayremove.
 
     // Définir une icône personnalisée pour les restaurants
     const restaurantIcon = L.icon({
