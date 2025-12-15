@@ -11,7 +11,7 @@ function applyMobileClass() {
       document.body.classList.remove('mobile');
     }
   } catch (e) {
-    // ignore
+    // ignorer les erreurs silencieusement
   }
 }
 applyMobileClass();
@@ -34,7 +34,7 @@ function humanizeKey(key) {
     'note': 'Note', 'description': 'Description'
   };
   if (mapping[k]) return mapping[k];
-  // fallback: remove suffixes like _id, _code, replace _ and - with space, Title Case
+  // fallback : supprimer les suffixes comme _id, _code, remplacer _ et - par des espaces, mettre en Title Case
   let s = k.replace(/(_id|_code)$/i, '');
   s = s.replace(/[_-]+/g, ' ');
   s = s.split(' ').map(p => p.charAt(0).toUpperCase() + p.slice(1)).join(' ');
@@ -118,7 +118,7 @@ searchControl.onAdd = function () {
   div.style.padding = '6px';
   div.style.margin = '6px';
   div.style.boxShadow = '0 2px 6px rgba(0,0,0,0.15)';
-  // button toggles the visibility of the input; input is initially hidden on small screens
+  // le bouton bascule la visibilité du champ de saisie ; le champ est masqué par défaut sur petits écrans
   div.innerHTML = `
     <div class="search-wrap" style="display:flex;align-items:center;gap:6px;">
       <button id="search-toggle" class="search-toggle-btn" title="Rechercher" aria-label="Rechercher">🔍</button>
@@ -160,7 +160,7 @@ searchControl.onAdd = function () {
           }
         }
       });
-      // hide input if it loses focus and is empty (mobile UX)
+      // masquer le champ s'il perd le focus et est vide (expérience mobile)
       input.addEventListener('blur', function() {
         setTimeout(() => {
           if (this.value.trim() === '') this.style.display = 'none';
@@ -337,7 +337,7 @@ function adjustPanelsForDevice() {
     } else {
       panel.classList.remove('compact');
     }
-  } catch (e) { /* ignore */ }
+  } catch (e) { /* ignorer */ }
 }
 adjustPanelsForDevice();
 window.addEventListener('resize', adjustPanelsForDevice);
@@ -368,7 +368,7 @@ listToggleBtn.onAdd = function () {
       listControl.addTo(map);
       isListVisible = true;
     } else {
-      try { map.removeControl(listControl); } catch (err) { /* ignore */ }
+      try { map.removeControl(listControl); } catch (err) { /* ignorer */ }
       isListVisible = false;
     }
   };
@@ -423,6 +423,20 @@ listControl.onAdd = function () {
       </div>
     </div>
   `;
+
+  // Permettre le défilement à l'intérieur de la légende sans provoquer le pan de la carte.
+  try {
+    L.DomEvent.disableClickPropagation(div);
+    if (L.DomEvent.disableScrollPropagation) L.DomEvent.disableScrollPropagation(div);
+  } catch (e) {
+    // Certaines versions de Leaflet n'exposent pas disableScrollPropagation ; ignorer sans erreur
+  }
+
+  // ensure internal scrolling is possible and we don't grow beyond viewport
+  div.style.overflowY = 'auto';
+  div.style.maxHeight = '50vh';
+  // nudge up a bit so it doesn't cover bottom UI (desktop)
+  div.style.marginBottom = '12px';
 
     // Setup: rendre la boîte repliable/expandable
     setTimeout(() => {

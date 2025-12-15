@@ -1,5 +1,5 @@
 /* === Style global === */
-/* DESIGN — variables and UI tweaks (non-destructive) */
+/* DESIGN — variables et ajustements UI (non-destructifs) */
 :root {
   --bg: #fafafa;
   --primary: #2a9df4;
@@ -10,13 +10,13 @@
   --radius: 10px;
 }
 
-/* Global typography using system stack (optionally add Google Font in index.html) */
+/* Typographie globale utilisant la pile système (optionnel: ajouter une police Google dans index.html) */
 body {
   color: #0f172a;
   background: var(--bg);
 }
 
-/* Buttons and UI */
+/* Boutons et interface utilisateur */
 .btn-primary, #goMap {
   background: var(--primary);
   color: #fff;
@@ -31,7 +31,7 @@ body {
   filter: brightness(0.97);
 }
 
-/* Leaflet popup and control card style */
+/* Style des popups Leaflet et des cartes de contrôle */
 .leaflet-popup-content-wrapper {
   background: var(--card-bg) !important;
   border-radius: calc(var(--radius) - 2px) !important;
@@ -41,7 +41,7 @@ body {
 .leaflet-popup-content img { border-radius: 6px; display:block; margin: 0 auto 6px; }
 .leaflet-control-custom { background: var(--card-bg); border-radius: var(--radius); box-shadow: var(--shadow); padding: 8px; }
 
-/* Improve hit targets and spacing for all leaflet controls */
+/* Améliorer les zones tactiles et l'espacement pour tous les contrôles Leaflet */
 .leaflet-bar button, .leaflet-bar a, .leaflet-control-custom button {
   min-width: 44px;
   min-height: 44px;
@@ -52,37 +52,37 @@ body {
   cursor: pointer;
 }
 
-/* Make control groups stack nicely on mobile */
+/* Empiler proprement les groupes de contrôles sur mobile */
 .leaflet-top.leaflet-right, .leaflet-top.leaflet-left {
   display: flex !important;
   flex-direction: column;
   gap: 8px;
 }
 
-/* Layer control (checkboxes) spacing */
+/* Espacement du contrôle des couches (cases à cocher) */
 .leaflet-control-layers-overlays label { display: flex; align-items: center; gap: 8px; }
 
-/* Popup typography responsive */
+/* Typographie des popups (responsive) */
 .leaflet-popup-content-wrapper { font-size: 14px; line-height: 1.3; }
 .leaflet-popup-content .restaurant-popup .rp-title { font-size: 16px; }
 .leaflet-popup-content .restaurant-popup .rp-key { font-size: 13px; }
 .leaflet-popup-content .restaurant-popup .rp-value { font-size: 14px; }
 
-/* Route panel: make it collapsible and compact on small screens */
+/* Panneau d'itinéraire : le rendre repliable et compact sur petits écrans */
 .route-panel { transition: transform 0.25s ease, max-height 0.25s ease; }
 .route-panel.compact { max-height: 56px; overflow: hidden; padding: 8px; }
 .route-panel .collapsed-summary { display: none; }
 .route-panel.compact .collapsed-summary { display: block; }
 
-/* Toasts: ensure readable on all screens */
+/* Toasters : garantir une lisibilité sur tous les écrans */
 #toast-container { max-width: 92vw; left: 50%; transform: translateX(-50%); right: auto; }
 
-/* Ensure the legend/list control is scrollable and doesn't overflow */
+/* S'assurer que le contrôle légende/liste est défilable et ne déborde pas */
 .leaflet-control-custom { box-sizing: border-box; }
 .leaflet-control-custom ul { margin: 0; padding: 0; }
 
 
-/* === Restaurant popup custom style === */
+/* === Style personnalisé des popups des restaurants === */
 .restaurant-popup { width: 260px; font-family: "Segoe UI", Arial, sans-serif; color: #0f172a; }
 .restaurant-popup .rp-header { display:flex; align-items:center; gap:10px; padding-bottom:8px; border-bottom:1px solid rgba(15,23,42,0.06); }
 .restaurant-popup .rp-icon { width:48px; height:48px; border-radius:12px; background: linear-gradient(180deg,#fff,#f7f7f7); padding:6px; box-shadow: 0 4px 14px rgba(15,23,42,0.08); }
@@ -98,17 +98,17 @@ body {
 .rp-btn-itineraire { background: var(--accent); color: white; border: none; padding:6px 10px; border-radius:8px; cursor:pointer; font-weight:700; }
 .rp-btn-itineraire:hover { filter:brightness(0.95); }
 
-/* Theme: dark toggle via body.dark (optional) */
+/* Thème : bascule sombre via body.dark (optionnel) */
 body.dark { --bg: #0b1220; --card-bg: #0f1724; --primary: #5cc4ff; --accent: #ff7b59; --muted: #94a3b8; color: #e6eef8; }
 .dark .restaurant-popup { color: #e6eef8; }
 .dark .leaflet-popup-content-wrapper { background: #0f1724 !important; }
 
-/* Tweak popup container visuals */
+/* Ajuster l'apparence du conteneur des popups */
 .leaflet-popup-content-wrapper { padding:12px !important; border-radius: 12px !important; }
 .leaflet-popup-tip { background: var(--card-bg) !important; }
 
 
-/* Toast notifications */
+/* Notifications (toasts) */
 #toast-container {
   position: fixed;
   right: 16px;
@@ -130,7 +130,7 @@ body.dark { --bg: #0b1220; --card-bg: #0f1724; --primary: #5cc4ff; --accent: #ff
 }
 .app-toast.hide { transform: translateY(-10px); opacity: 0; }
 
-/* Route panel tweaks */
+/* Ajustements du panneau d'itinéraire */
 .route-panel { min-width: 220px; padding: 10px; }
 .route-panel select { border-radius: 6px; border: 1px solid rgba(0,0,0,0.08); }
 .route-panel #clear-route { background: transparent; border: none; cursor: pointer; }
@@ -149,17 +149,17 @@ body.dark { --bg: #0b1220; --card-bg: #0f1724; --primary: #5cc4ff; --accent: #ff
 .list-box.collapsed .list-box-content { max-height: 0; padding: 0 8px; overflow: hidden; }
 .list-box.expanded .list-box-content { max-height: 60vh; padding: 6px 8px; }
 
-/* Mobile tweaks: box full width */
+/* Ajustements mobile : boîte pleine largeur */
 @media (max-width: 600px) {
   .list-box { width: 92vw !important; }
-  /* Make header larger for easy tapping */
+  /* Agrandir l'en-tête pour faciliter l'appui tactile */
   .list-box .list-box-header { padding:14px 16px; }
   .list-box .list-box-title { font-size:16px; }
   .list-box .list-box-toggle { font-size:18px; }
   .list-box { border-radius: 10px; }
 }
 
-/* Desktop: show expanded by default for larger screens */
+/* Bureau : afficher étendu par défaut sur grands écrans */
 @media (min-width: 1024px) {
   .list-box { width: 300px; }
   .list-box .list-box-title { font-size:16px; }
@@ -253,44 +253,59 @@ h2 {
 
 /* Responsive improvements for small devices */
 @media (max-width: 600px) {
-  /* Make map taller to use vertical space */
+  /* Rendre la carte plus haute pour utiliser l'espace vertical */
   #map { height: calc(100vh - 56px) !important; }
 
-  /* Controls larger and touch-friendly */
+  /* Contrôles plus grands et adaptés au tactile */
   .leaflet-control-custom, .leaflet-bar button { padding: 10px !important; min-width: 44px; min-height: 44px; }
 
-  /* Search control full width near top */
+  /* Contrôle de recherche pleine largeur près du haut */
   .leaflet-top.leaflet-right .leaflet-control-custom { right: 8px; left: auto; top: 8px; }
   #search-global { width: 180px !important; }
 
-  /* On small screens hide the visible search input to save space; JS toggle will show it when needed */
+  /* Sur petits écrans, masquer le champ de recherche visible pour économiser de l'espace ; le JS l'affichera à la demande */
   #search-global { display: none; }
-  /* If the control wrapper has only the search input, reduce its footprint */
+  /* Si le conteneur ne contient que le champ de recherche, réduire son empreinte */
   .leaflet-top.leaflet-right .leaflet-control-custom input#search-global { display: none; }
 
-  /* Route panel: full-width bottom bar */
+  /* Panneau d'itinéraire : barre pleine largeur en bas */
   .route-panel { box-sizing: border-box !important; width: calc(100% - 16px) !important; left: 8px !important; right: 8px !important; bottom: 8px !important; position: absolute !important; z-index: 10000 !important; border-radius: 12px !important; }
   .route-panel .rp-props { max-height: 80px !important; }
 
-  /* Marker list (legend) reduced and moved up to avoid covering route panel */
-  .leaflet-bottom.leaflet-right .leaflet-control-custom { right: 8px !important; bottom: 100px !important; width: 70% !important; max-width: 320px !important; }
+  /* Liste des marqueurs (légende) réduite et remontée pour éviter de couvrir le panneau d'itinéraire */
+    .leaflet-bottom.leaflet-right .leaflet-control-custom { right: 8px !important; bottom: 100px !important; width: 70% !important; max-width: 320px !important; }
 
-  /* Make top-right controls more compact on small screens */
+  /* Rendre les contrôles en haut à droite plus compacts sur petits écrans */
   .leaflet-top.leaflet-right { gap: 6px !important; }
   .leaflet-top.leaflet-right .leaflet-control-custom, .leaflet-top.leaflet-right .leaflet-bar { transform: translateZ(0); }
 
-  /* Popup sizing: wider and centered, large typography */
+  /* Taille des popups : plus larges et centrées, typographie augmentée */
   .leaflet-popup-content-wrapper { max-width: 92vw !important; width: 92vw !important; }
   .restaurant-popup { width: auto !important; }
   .restaurant-popup .rp-title { font-size: 16px !important; }
   .restaurant-popup .rp-row { padding: 8px 0 !important; }
   .rp-btn-itineraire { padding: 10px 14px !important; font-size: 14px !important; }
 
-  /* Toasts centered at top for mobile */
+  /* Toasters centrés en haut pour mobile */
   #toast-container { left: 50%; transform: translateX(-50%); right: auto; top: 12px; }
 
-  /* Increase z-index of popup so it appears above bottom panels */
+  /* Augmenter le z-index du popup pour qu'il apparaisse au-dessus des panneaux bas */
   .leaflet-popup { z-index: 99999 !important; }
+}
+
+/* Desktop: move the bottom-right legend a bit higher so it doesn't cover markers near the bottom */
+@media (min-width: 1024px) {
+  .leaflet-bottom.leaflet-right .leaflet-control-custom { bottom: 120px !important; max-height: calc(100vh - 160px) !important; overflow-y: auto !important; }
+}
+
+/* Make sure legend/control is scrollable and doesn't block pointer events */
+.leaflet-control-custom { -webkit-overflow-scrolling: touch; }
+
+/* Route panel mobile tweaks: reduce height and ensure it's visible above other panels */
+@media (max-width: 600px) {
+  .route-panel { bottom: 8px !important; left: 8px !important; right: 8px !important; width: calc(100% - 16px) !important; z-index: 10002 !important; }
+  .route-panel.compact { max-height: 56px !important; overflow: hidden !important; }
+  .route-panel #route-info { max-height: 80px; overflow-y: auto; font-size: 13px; }
 }
 
 /* Further small-screen control tweaks: shrink itinerary button and locate button */
