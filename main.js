@@ -347,6 +347,21 @@ routePanelControl.onAdd = function () {
 };
 routePanelControl.addTo(map);
 
+// Adaptation JS : si écran petit, rendre le panneau d'itinéraire compact par défaut
+function adjustPanelsForDevice() {
+  try {
+    const panel = document.getElementById('route-panel');
+    if (!panel) return;
+    if (window.matchMedia && window.matchMedia('(max-width: 600px)').matches) {
+      panel.classList.add('compact');
+    } else {
+      panel.classList.remove('compact');
+    }
+  } catch (e) { /* ignore */ }
+}
+adjustPanelsForDevice();
+window.addEventListener('resize', adjustPanelsForDevice);
+
 // Chargement du GeoJSON externe et intégration à la carte
 // Utilise explicitement le fichier confirmé par l'utilisateur
 fetch('Restauarant_Vietnamien.geojson.1.geojson')
@@ -416,11 +431,17 @@ listControl.onAdd = function () {
           header.setAttribute('aria-expanded', 'false');
         }
       }
-      // Header click / key interaction
+      // Header click / key interaction (large tap area)
       if (header) {
         header.addEventListener('click', () => setExpanded(!box.classList.contains('expanded')));
         header.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setExpanded(!box.classList.contains('expanded')); } });
+        // Improve touch responsiveness by handling touchstart separately
+        header.addEventListener('touchstart', (e) => { e.preventDefault(); setExpanded(!box.classList.contains('expanded')); });
       }
+
+      // Set initial state according to device width: expanded on large screens, collapsed on small
+      const shouldExpandByDefault = (window.matchMedia && window.matchMedia('(min-width: 1024px)').matches);
+      setExpanded(shouldExpandByDefault);
 
       // Item click: recentre et ouvre le popup
       const items = div.querySelectorAll('.list-item');
